@@ -19,5 +19,5 @@ nPrimosNice n = take n (cribar [2..])
 
 -- Ejercicio 6
 
-partir :: [a] -> ([a], [a])
+partir :: [a] -> [([a], [a])]
 partir l = [(take i l, drop i l) | i <- [1..(length l)]]
