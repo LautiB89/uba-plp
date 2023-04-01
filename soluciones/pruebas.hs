@@ -1,4 +1,3 @@
-import Distribution.SPDX (LicenseId(X11))
 comp :: (b -> c) -> (a -> b) -> a -> c
 comp f g x = f (g x)
 
@@ -80,3 +79,7 @@ union c1 c2 y = c1 y || c2 y
 -- No podemos definir un map a menos que:
 -- para map f,  sea inversible: map f C x = C (f⁻¹ x)
 -- o bien el conjunto sea finito (conocido)
+
+recr :: b -> (a -> [a] -> b -> b) -> [a] -> b
+recr z _ [] = z
+recr z f (x:xs) = f x xs (recr z f xs) 
