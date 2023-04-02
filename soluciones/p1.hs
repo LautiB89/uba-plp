@@ -1,3 +1,4 @@
+import Data.IntMap.Merge.Lazy (merge)
 --- funcion d mierda
 recr :: b -> (a -> [a] -> b -> b) -> [a] -> b
 recr z _ [] = z
@@ -158,7 +159,43 @@ insertarOrdenado e = recr [e] (\x xs rec -> if e <= x then e : (x : xs) else x:r
 Todavia no se que poner, estaba tratanto de recrearlo usando recursion primitiva
 la idea es que a cada numero i en [1..n) le aplico listasQueSuman
 y le agrego (n-i) al ppio de cada lista, para despues concatenar todas
-listasQueSuman2 :: Int -> [[Int]]
-listasQueSuman2 n = recr [[]] (\x xs rec -> concatMap ...) [1..n]
-listasQueSuman2 n = [ i:lista | i <- [1..n], lista <- listasQueSuman (n-i)]
+...
+AHI ESTA
+es exactamente lo que dije, no solo estoy queriendo acceder a listasQueSuman (n-1) (el paso recursivo)
+Sino que estoy queriendo acceder a todos los pasos recursivos (recursion global) para listasQueSuman (1..n)
  -}
+
+-- Ejercicio 13
+
+type DivideConquer a b = (a -> Bool) -- determina si es o no el caso trivial
+                    -> (a -> b)      -- resuelve el caso trivial
+                    -> (a -> [a])    -- parte el problema en sub-problemas
+                    -> ([b] -> b)    -- combina resultados
+                    -> a             -- estructura de entrada
+                    -> b             -- resultado
+
+dc :: DivideConquer a b
+dc trivial solve split combine x
+        | trivial x = solve x
+        | otherwise = combine (map dcRec (split x))
+            where dcRec = dc trivial solve split combine
+
+mergeSort :: Ord a => [a] -> [a]
+mergeSort = dc trivial solve split combine
+    where
+        trivial l = length l == 1
+        solve = id
+        split l = (\(x, y) -> [x,y]) $ splitAt (length l `div` 2) l
+        combine [x:xs,y:ys] = if x < y then x : combine [xs,y:ys] else y : combine [x:xs,ys]
+        combine l = concat l
+dcMap :: (a -> b) -> [a] -> [b]
+dcMap f = dc ((1==).length) ((:[]).f.head) (\l -> [take (length l `div` 2) l, drop (length l `div` 2) l]) concat
+
+dcMapLindo :: (a -> b) -> [a] -> [b]
+dcMapLindo f = dc trivial solve split combine
+    where
+        trivial l = length l == 1
+        solve [x] = [f x]
+        split l = (\(x, y) -> [x,y]) $ splitAt (length l `div` 2) l
+        combine = concat
+

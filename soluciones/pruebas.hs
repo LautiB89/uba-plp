@@ -82,4 +82,8 @@ union c1 c2 y = c1 y || c2 y
 
 recr :: b -> (a -> [a] -> b -> b) -> [a] -> b
 recr z _ [] = z
-recr z f (x:xs) = f x xs (recr z f xs) 
+recr z f (x:xs) = f x xs (recr z f xs)
+
+soloPuntosFijosEnN :: Int -> [Int -> Int] -> [Int -> Int]
+soloPuntosFijosEnN n = filter ((n==).($ n))
+-- es la misma condicion que (\f -> n == f n)
