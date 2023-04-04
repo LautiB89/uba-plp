@@ -1,4 +1,3 @@
-import Data.IntMap.Merge.Lazy (merge)
 --- funcion d mierda
 recr :: b -> (a -> [a] -> b -> b) -> [a] -> b
 recr z _ [] = z
@@ -188,6 +187,7 @@ mergeSort = dc trivial solve split combine
         split l = (\(x, y) -> [x,y]) $ splitAt (length l `div` 2) l
         combine [x:xs,y:ys] = if x < y then x : combine [xs,y:ys] else y : combine [x:xs,ys]
         combine l = concat l
+
 dcMap :: (a -> b) -> [a] -> [b]
 dcMap f = dc ((1==).length) ((:[]).f.head) (\l -> [take (length l `div` 2) l, drop (length l `div` 2) l]) concat
 
@@ -199,3 +199,27 @@ dcMapLindo f = dc trivial solve split combine
         split l = (\(x, y) -> [x,y]) $ splitAt (length l `div` 2) l
         combine = concat
 
+-- Hacer anteriores
+
+-- Ejercicio 17
+
+generate :: ([a] -> Bool) -> ([a] -> a) -> [a]
+generate stop next = myGenerateFrom stop next []
+
+generateFrom:: ([a] -> Bool) -> ([a] -> a) -> [a] -> [a]
+generateFrom stop next xs
+        | stop xs = init xs
+        | otherwise = generateFrom stop next (xs ++ [next xs])
+
+generateBase :: ([a] -> Bool) -> a -> (a -> a) -> [a]
+generateBase stop base next = generate stop (\xs -> if null xs then base else next (last xs))
+
+factoriales :: Int -> [Int]
+factoriales n = generate ((n+1==).length) (\xs -> if null xs then 1 else last xs * (length xs + 1))
+
+iterateN :: Int -> (a -> a) -> a -> [a]
+iterateN n f x = generateBase ((n+1==).length) x f
+-- ahorras f y x usando flip...
+
+myGenerateFrom :: ([a] -> Bool) -> ([a] -> a) -> [a] -> [a]
+myGenerateFrom stop next xs = last (takeWhile (not.stop) (iterate (\ys -> ys ++ [next ys]) xs))
