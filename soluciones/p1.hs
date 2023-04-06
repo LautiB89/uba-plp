@@ -58,9 +58,40 @@ myJoin1 = flip (foldr (:))
 
 {- Supongamos que no quiero recibir el caso base como parametro, quiero que sea [] -}
 
+
+miConcat xs ys = (foldr (\x rec -> x : rec) ys) xs
+
+{- 
+(a -> b -> b) -> b -> [a] -> b
+(a -> [a] -> [a]) -> [a] -> [a] -> [a]
+miconcat [] [1,2,3]
+(foldr (\x rec -> x : rec) [1,2,3]) []
+[1,2,3]
+
+miconcat [7] [1,2,3]
+(foldr (\x rec -> x : rec) [1,2,3]) [7]
+x = 7
+rec = miconcat [] [1,2,3] = [1,2,3]
+x : rec = {7,1,2,3}
+
+(miConcatFuncion [1,2,3]) [7,8] = [1,2,3,7,8]
+miConcatFuncion [1,2,3] devuelve una funcion que pega [1,2,3] al principio de la lista que recibe
+x = 1 
+rec = miConcatFuncion [2,3]
+rec [7,8] = [2,3,7,8]
+
+
+(miConcatFuncion []) ys = ys
+(f) ys = ys o sea que f es id
+f :: ([a] -> [a])
+
+ -}
+
 myJoin :: [a] -> [a] -> [a]
-myJoin = foldr (\ x rec ys -> x : rec ys) id
+myJoin = foldr (\ x rec -> \ys -> x : rec ys) id
 -- rec es una funcion :: ([a] -> [a])
+
+
 
 {-
 myJoin deberia hacer esto
@@ -179,6 +210,8 @@ dc trivial solve split combine x
         | otherwise = combine (map dcRec (split x))
             where dcRec = dc trivial solve split combine
 
+
+-- No anda es un asco esto
 mergeSort :: Ord a => [a] -> [a]
 mergeSort = dc trivial solve split combine
     where
@@ -200,6 +233,24 @@ dcMapLindo f = dc trivial solve split combine
         combine = concat
 
 -- Hacer anteriores
+
+-- Ejercicio 15
+
+-- una funcion curryficada toma los argumentos asi a->b->...
+mapPares :: (a -> b -> c) -> [(a, b)] -> [c]
+mapPares = map.uncurry
+--mapPares f = map (uncurry f)
+
+armarPares :: [a] -> [b] -> [(a, b)]
+armarPares [] _ = []
+armarPares _ [] = []
+armarPares (x:xs) (y:ys) = (x,y) : armarPares xs ys
+
+armarPares2 :: [a] -> [b] -> [(a, b)]
+armarPares2 = foldr (\x rec ys -> if null ys then rec [] else (x, head ys) : rec (tail ys)) (const [])
+
+mapDoble :: (a -> b -> c) -> [a] -> [b] -> [c]
+mapDoble x y z = mapPares x (armarPares y z)
 
 -- Ejercicio 17
 
@@ -223,3 +274,13 @@ iterateN n f x = generateBase ((n+1==).length) x f
 
 myGenerateFrom :: ([a] -> Bool) -> ([a] -> a) -> [a] -> [a]
 myGenerateFrom stop next xs = last (takeWhile (not.stop) (iterate (\ys -> ys ++ [next ys]) xs))
+
+
+-- Ejercicio 18
+
+foldNat :: (Integer -> b -> b) -> b -> Integer -> b
+foldNat _ base 0 = base
+foldNat f base n = f n (foldNat f base (n-1))
+
+potencia :: Integer -> Integer -> Integer
+potencia pot = foldNat (*) 1 pot
