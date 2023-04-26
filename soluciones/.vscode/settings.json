@@ -1,0 +1,11 @@
+{
+    "markdown-preview-enhanced.previewTheme": "github-dark.css",
+    "haskell.manageHLS": "GHCup",
+    "markdownlint.config": {},
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+        "editor.formatOnPaste": true,
+        "editor.formatOnSave": true
+    },
+    "markdown-preview-enhanced.configPath": "${workspaceFolder}/.vscode/.mume",
+}
