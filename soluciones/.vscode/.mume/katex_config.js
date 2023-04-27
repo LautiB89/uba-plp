@@ -5,7 +5,7 @@ module.exports = {
     "\\false": "\\sf{false}",
     "\\bool": "\\sf{Bool}",
     "\\num": "\\underline{#1}",
-    "\\succ": "\\sf{succ}({#1})",
+    "\\succ": "\\sf{succ}(#1)",
     "\\pred": "\\sf{pred}({#1})",
     "\\iszero": "\\sf{isZero}({#1})",
     "\\asign": "\\{{#1}\\leftarrow{#2}\\}",
