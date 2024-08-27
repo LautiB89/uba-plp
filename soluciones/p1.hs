@@ -47,7 +47,7 @@ partesDe n = partesDe (n-1) ++ map (++[n]) (partesDe (n-1))
 -- Ejercicio 9
 
 mySum :: [Int] -> Int
-mySum = sum
+mySum = foldr (\x rec -> x + rec) 0
 
 myElem :: Eq a => a -> [a] -> Bool
 myElem e = foldr (\x rec -> x == e || rec) False
